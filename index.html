@@ -1,0 +1,18 @@
+<html>
+  <head>
+    <script type="text/javascript" src="webcrypto.js"></script>
+    <title>Web Crypto Hello World</title>
+  </head>
+  <body>
+    <p>This is a super simple example of trying to get Web Cryptography working</p>
+    <form id="passwordEntry" onSubmit="return getSecret()">
+      <label for="top_secret_1">Value to Encrypt:</label>
+      <input type="text" id="top_secret_1" name="secret_info" value="SecretSquirrel" />
+      <br />
+      <label for="password_1">Password for encryption:</label>
+      <input type="text" id="password_1" name="passwordInfo" />
+      <br />
+      <button type="submit">Go</submit>
+    </form>
+  </body>
+</html>
