@@ -26,19 +26,15 @@ var key_object = null;
 
 var promise_key = null;
 
-//var data = "SecretSquirrel";
-//var data = document.getElementById("top_secret_1").value;
 var data = null;
 
 var encrypted_data = null;
 var encrypt_promise = null;
 
-//var vector = crypto.getRandomValues(new Uint8Array(16));
 var vector = null;
 
 function getSecret() {
   console.log("User submitted a secret");
-  //var secretPass = "This is a really long sentence that should really not be this long, but hey, whatcha gonna do?";
   if(!document.getElementById("top_secret_1").value || document.getElementById("top_secret_1").value === ""){
       console.log("Must have data to encrypt");
       return;
@@ -92,6 +88,8 @@ function encrypt_data(){
         function(result){
             encrypted_data = new Uint8Array(result);
             console.log("Got encrypted data back, with length of " + encrypted_data.length);
+            secureStorage = window.localStorage;
+            secureStorage.setItem('mySecret', convertArrayBufferViewtoString(encrypted_data));
             console.log("Decryptying data with the password...");
             decrypt_data();
         },
@@ -103,7 +101,16 @@ function encrypt_data(){
 
 function decrypt_data()
 {
-    decrypt_promise = crypto.subtle.decrypt({name: "AES-GCM", iv: vector}, key_object, encrypted_data);
+    encrypted_data_from_local = convertStringToArrayBufferView(secureStorage.getItem('mySecret'));
+    secretPassFromLocal = document.getElementById("password_1").value;
+
+    var secretDigest_promise = crypto.subtle.digest('SHA-256', convertStringToArrayBufferView(secretPassFromLocal));
+    secretDigest_promise.then(function(secretDigest){
+      rightsizeDigest = secretDigest.slice(0,16);
+      vector = rightsizeDigest;
+    });
+
+    decrypt_promise = crypto.subtle.decrypt({name: "AES-GCM", iv: vector}, key_object, encrypted_data_from_local);
 
     decrypt_promise.then(
         function(result){
