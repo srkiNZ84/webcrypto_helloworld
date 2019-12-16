@@ -122,3 +122,19 @@ function decrypt_data()
         }
     );
 }
+
+function mystify(stringToEncrypt, rounds){
+  console.log("got a string " + stringToEncrypt);
+  var secretDigestPromise = crypto.subtle.digest('SHA-256', convertStringToArrayBufferView(stringToEncrypt));
+  secretDigestPromise.then(function(secretDigest){
+    console.log("Digest is " + secretDigest);
+    rounds--;
+    if(rounds > 0){
+      mystify(convertArrayBufferViewtoString(secretDigest), rounds);
+    }
+    else {
+      console.log("Returning " + convertArrayBufferViewtoString(secretDigest));
+      return secretDigest;
+    }
+  });
+}
